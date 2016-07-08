@@ -1,9 +1,9 @@
-#version 120
+#version 430
 
 attribute vec2 vertices;
 attribute vec2 uvs;
 
-varying vec2 interpolatedUVs;
+out vec2 interpolatedUVs;
 
 void main()
 {
