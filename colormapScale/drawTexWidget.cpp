@@ -129,13 +129,26 @@ void drawTexWidget::paintGL()
 	glClear(GL_COLOR_BUFFER_BIT);
 
 
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	GLint samplerLoc = glGetUniformLocation(shaderProgram, "ScreenOffset");
 	glUniform1f(samplerLoc, 0.0f);
 
+	GLint rotTransMatLoc = glGetUniformLocation(shaderProgram, "RotTransMat");
+	glm::mat3 testMat(1.0);
+	//testMat[0][2] = 1.0;
+	testMat[2][0] = 1.0;
+	testMat[2][1] = 1.0;
+	glUniformMatrix3fv(rotTransMatLoc, 1, 0, &testMat[0].x);
+
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	
 	samplerLoc = glGetUniformLocation(shaderProgram, "ScreenOffset");
 	glUniform1f(samplerLoc, 1.0f);
+
+	glm::mat3 testMat2(1.0);
+	testMat2[2][1] = 0.5;
+	glUniformMatrix3fv(rotTransMatLoc, 1, 0, &testMat2[0].x);
+
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 }
 
