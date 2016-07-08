@@ -47,9 +47,6 @@
     <ClCompile Include="textRenderer.cc">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="frameBufferObject.cc">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="drawCanvasWidget.h">
@@ -76,15 +73,18 @@
     <ClInclude Include="textRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="frameBufferObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Shaders\colorScale_vs.glsl">
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\Shaders\colorScale_fs.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\texRender_fs.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\Shaders\texRender_vs.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
