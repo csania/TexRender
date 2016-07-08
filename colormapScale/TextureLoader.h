@@ -11,6 +11,9 @@ class TextureLoader
 public :
 	static TextureLoader *Instance();
 
+	unsigned int setupPointDrawShader(std::string vsSource, std::string fsSource);
+	std::string readShaderSource(std::string location);
+	bool checkShaderCompileError(GLuint shaderID);
 	bool loadDDsTex(std::string name);
 
 	gli::texture2D * getLoadedTexture();

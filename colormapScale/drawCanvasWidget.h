@@ -11,10 +11,6 @@ public:
 	void initializeGL();
 	void sendDataToOpenGL();
 
-	unsigned int setupPointDrawShader();
-	std::string readShaderSource(std::string location);
-	bool checkShaderCompileError(GLuint shaderID);
-
 private:
 
 	unsigned int shaderProgram;
