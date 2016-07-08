@@ -3,28 +3,6 @@
 #include "TextureLoader.h"
 #include "drawTexWidget.h"
 
-const GLchar* vertexSource =
-"#version 120\n"
-"attribute vec2 vertices;"
-"attribute vec2 uvs;"
-
-"varying vec2 interpolatedUVs;"
-
-"void main()"
-"{"
-"    interpolatedUVs = uvs;"
-"    gl_Position = vec4(vertices, 0.0, 1.0);"
-"}";
-
-const GLchar* fragmentSource =
-"#version 120\n"
-"varying vec2 interpolatedUVs;"
-"uniform sampler2D TexSampler;"
-"void main()"
-"{"
-"    gl_FragColor = texture2D(TexSampler, interpolatedUVs);"
-"}";
-
 void drawTexWidget::setUpTexture()
 {
 	GLuint tex;
@@ -129,33 +107,12 @@ void drawTexWidget::sendDataToOpenGL()
 
 void drawTexWidget::setUpShaderProgram()
 {
-	// Create and compile the vertex shader
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexSource, NULL);
-	glCompileShader(vertexShader);
+	std::string vsLoc = "D:\\GitRep\\TexRender\\Shaders\\texRender_vs.glsl";
+	std::string fsLoc = "D:\\GitRep\\TexRender\\Shaders\\texRender_fs.glsl";
 
-	// Create and compile the fragment shader
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
-	glCompileShader(fragmentShader);
-
-	if (checkShaderCompileError(vertexShader) && checkShaderCompileError(fragmentShader)) {
-
-		// Link the vertex and fragment shader into a shader program
-		shaderProgram = glCreateProgram();
-		glAttachShader(shaderProgram, vertexShader);
-		glAttachShader(shaderProgram, fragmentShader);
-		glBindFragDataLocation(shaderProgram, 0, "outColor");
-		glLinkProgram(shaderProgram);
-
-		int status = 0;
-		glGetProgramiv(shaderProgram, GL_LINK_STATUS, &status);
-		if (GL_FALSE == status) {
-			int a = 0;
-		}
-
-		glUseProgram(shaderProgram);
-	}
+	shaderProgram = TextureLoader::Instance()->setupPointDrawShader(vsLoc, fsLoc);
+	glUseProgram(shaderProgram);
+	
 }
 
 void drawTexWidget::initializeGL()

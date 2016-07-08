@@ -9,8 +9,8 @@ void DrawCanvasWidget::initializeGL()
 	glewInit();
 	sendDataToOpenGL();
 
-	std::string vsLocation = "C:\\Users\\alex.cicenkov\\Documents\\Visual Studio 2015\\Projects\\colormapScale\\Shaders\\colorScale_vs.glsl";
-	std::string fsLocation = "C:\\Users\\alex.cicenkov\\Documents\\Visual Studio 2015\\Projects\\colormapScale\\Shaders\\colorScale_fs.glsl";
+	std::string vsLocation = "D:\\GitRep\\TexRender\\Shaders\\colorScale_vs.glsl";
+	std::string fsLocation = "D:\\GitRep\\TexRender\\Shaders\\colorScale_fs.glsl";
 
 	shaderProgram = TextureLoader::Instance()->setupPointDrawShader(vsLocation, fsLocation);
 	glUseProgram(shaderProgram);
