@@ -3,6 +3,25 @@
 #include "TextureLoader.h"
 #include "drawTexWidget.h"
 
+
+void drawTexWidget::setUpShaderProgram()
+{
+	std::string vsLoc = "D:\\GitRep\\TexRender\\Shaders\\texRender_vs.glsl";
+	std::string fsLoc = "D:\\GitRep\\TexRender\\Shaders\\texRender_fs.glsl";
+
+	shaderProgram = TextureLoader::Instance()->setupPointDrawShader(vsLoc, fsLoc);
+	glUseProgram(shaderProgram);
+
+}
+
+void drawTexWidget::initializeGL()
+{
+	glewInit();
+	setUpShaderProgram();
+	setUpTexture();
+	sendDataToOpenGL();
+}
+
 void drawTexWidget::setUpTexture()
 {
 	GLuint tex;
@@ -32,22 +51,21 @@ void drawTexWidget::setUpTexture()
 	QRect boundingRect;
 	painter.drawText(rectangle, 0, "Hello", &boundingRect);
 	painter.end();
-	qIm1 = QGLWidget::convertToGLFormat(qIm1);
 
 	QImage qIm2 = QImage(400, 400, QImage::Format_RGB32);
 	painter.begin(&qIm2);
 	font = painter.font();
 	font.setPixelSize(55);
 	painter.setFont(font);
-	painter.drawText(rectangle, 0, "Hello", &boundingRect);
+	painter.drawText(rectangle, 0, "Bye-Bye", &boundingRect);
 	painter.end();
-	qIm2 = QGLWidget::convertToGLFormat(qIm2);
 
 	QImage result = QImage(800, 800, QImage::Format_RGB32);
 	painter.begin(&result);
 	painter.drawImage(0, 0, qIm1);
 	painter.drawImage(0, 400, qIm2);
 	painter.end();
+	result = QGLWidget::convertToGLFormat(result);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, result.width(), result.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, result.bits());
 
@@ -74,7 +92,7 @@ void drawTexWidget::sendDataToOpenGL()
 	//GLuint myBufferID;
 	glGenBuffers(1, &verticesBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, verticesBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), NULL, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
 	//glBufferData(GL_ARRAY_BUFFER, 10000, NULL, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
@@ -105,75 +123,36 @@ void drawTexWidget::sendDataToOpenGL()
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 }
 
-void drawTexWidget::setUpShaderProgram()
-{
-	std::string vsLoc = "D:\\GitRep\\TexRender\\Shaders\\texRender_vs.glsl";
-	std::string fsLoc = "D:\\GitRep\\TexRender\\Shaders\\texRender_fs.glsl";
-
-	shaderProgram = TextureLoader::Instance()->setupPointDrawShader(vsLoc, fsLoc);
-	glUseProgram(shaderProgram);
-	
-}
-
-void drawTexWidget::initializeGL()
-{
-	glewInit();
-	setUpShaderProgram();
-	setUpTexture();
-	sendDataToOpenGL();
-}
-
-void drawTexWidget::setVertDataToGL(float offset)
-{
-	GLfloat verts[]
-	{
-		-1.0f + offset, -1.0f + offset,
-		-1.0f + offset, 0.0f + offset,
-		0.0f + offset, 0.0f + offset,
-		0.0f + offset, -1.0f + offset
-	};
-
-	int of = 1 + (int)offset;
-
-	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
-	//glBufferSubData(GL_ARRAY_BUFFER, of * sizeof(verts), sizeof(verts), verts);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
-}
-
 void drawTexWidget::paintGL()
 {
 	glClearColor(0.3f, 0.7f, 0.7f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	setVertDataToGL(0.0f);
-	// Draw a rectangle from the 2 triangles using 6 indices
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-	setVertDataToGL(1.0f);
-	// Draw a rectangle from the 2 triangles using 6 indices
 	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	GLint samplerLoc = glGetUniformLocation(shaderProgram, "ScreenOffset");
+	glUniform1f(samplerLoc, 0.0f);
+
+	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	samplerLoc = glGetUniformLocation(shaderProgram, "ScreenOffset");
+	glUniform1f(samplerLoc, 1.0f);
 
 }
 
-bool drawTexWidget::checkShaderCompileError(GLuint shaderID)
-{
-	GLint compiled = 0;
-	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &compiled);
-
-	if (!compiled) {
-		// Compile failed, store log and return false
-		int length = 0;
-		//logString = "";
-		glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &length);
-		if (length > 0) {
-			char * c_log = new char[length];
-			int written = 0;
-			glGetShaderInfoLog(shaderID, length, &written, c_log);
-			auto logString = c_log;
-			delete[] c_log;
-		}
-		return false;
-	}
-	return true;
-}
+//void drawTexWidget::setVertDataToGL(float offset)
+//{
+//	GLfloat verts[]
+//	{
+//		-1.0f + offset, -1.0f + offset,
+//		-1.0f + offset, 0.0f + offset,
+//		0.0f + offset, 0.0f + offset,
+//		0.0f + offset, -1.0f + offset
+//	};
+//
+//	int of = 1 + (int)offset;
+//
+//	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
+//	//glBufferSubData(GL_ARRAY_BUFFER, of * sizeof(verts), sizeof(verts), verts);
+//	glEnableVertexAttribArray(0);
+//	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+//}

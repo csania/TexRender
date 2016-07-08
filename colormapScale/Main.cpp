@@ -7,8 +7,8 @@ int main(int argc, char **argv)
 {
 	QApplication app(argc, argv);
 
-	DrawCanvasWidget canvas;
-	canvas.show();
+	/*DrawCanvasWidget canvas;
+	canvas.show();*/
 
 	drawTexWidget texWidget;
 	texWidget.show();
